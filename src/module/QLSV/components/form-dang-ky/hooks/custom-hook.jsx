@@ -5,16 +5,14 @@ import {
   handleChangeValue,
   handleValidate,
   resetForm,
-  checkError,
 } from "../../../../../redux/quanLySV.slice";
 
 const useCustomHook = () => {
   const dispatch = useDispatch();
   const valuesHook = useSelector((state) => state.quanLySVReducer.values);
-  const errorsHook = useSelector(state => state.quanLySVReducer.errors)
-  const touchesHook = useSelector(state => state.quanLySVReducer.touches)
-  const checkNoErrorHook = useSelector(state => state.quanLySVReducer.checkNoError)
-  const dssvHook = useSelector(state => state.quanLySVReducer.dssv)
+  const errorsHook = useSelector((state) => state.quanLySVReducer.errors);
+  const touchesHook = useSelector((state) => state.quanLySVReducer.touches);
+  const dssvHook = useSelector((state) => state.quanLySVReducer.dssv);
   const handleChangeValueHook = (e) => {
     dispatch(
       handleChangeValue({
@@ -29,39 +27,30 @@ const useCustomHook = () => {
     dispatch(handleValidate(e.target.name));
   };
 
-
-
-
   const onSubmit = (e) => {
     e.preventDefault();
     const allTouches = Object.entries(touchesHook).every(([, value]) => value);
+    console.log("first", touchesHook);
     if (!allTouches) {
       Object.entries(touchesHook).forEach((resp) => {
         const [field, value] = resp;
         if (!value) {
-          console.log('trước',errorsHook)
-          dispatch(handleBlur(field))
-          dispatch(handleValidate(field))
-          console.log('sau',errorsHook)
+          dispatch(handleBlur(field));
+          dispatch(handleValidate(field));
         }
-      })
+      });
     }
-    console.log('1',checkNoErrorHook)
-    dispatch(checkError())
-    // const checkNoError = Object.entries(errorsHook).every(([, value]) => value === "")
-    // console.log(errorsHook)
-    console.log('2',checkNoErrorHook)
-    if (!checkNoErrorHook) {
+    const checkNoError = Object.entries(errorsHook).every(
+      ([, value]) => value === ""
+    );
+
+
+    if (!checkNoError) {
       return;
-    } 
-
-    //reset 
-    dispatch(resetForm())
-  }
-
-
-
-
+    }
+    //reset
+    dispatch(resetForm());
+  };
 
   const getFieldProps = (name) => {
     return {
@@ -70,12 +59,17 @@ const useCustomHook = () => {
       error: touchesHook[name] && errorsHook[name],
       onChange: handleChangeValueHook,
       onBlur: handleBlurHook,
-    }
-  }
+    };
+  };
 
   //Lưu danh sách sinh viên vào localStorage:
   // localStorage.setItem('dssv',JSON.stringify(dssvHook))
-  return [{ touchesHook, errorsHook }, { getFieldProps, onSubmit }];
+  return [
+    { touchesHook, errorsHook },
+    { getFieldProps, onSubmit },
+  ];
 };
 
 export default useCustomHook;
+
+
