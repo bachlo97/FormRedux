@@ -1,10 +1,11 @@
-import React, { Children } from "react";
+import React, { Children, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   handleBlur,
   handleChangeValue,
   handleValidate,
   resetForm,
+  handleChangeTimeVisitToFalse
 } from "../../../../../redux/quanLySV.slice";
 
 const useCustomHook = () => {
@@ -12,6 +13,7 @@ const useCustomHook = () => {
   const valuesHook = useSelector((state) => state.quanLySVReducer.values);
   const errorsHook = useSelector((state) => state.quanLySVReducer.errors);
   const touchesHook = useSelector((state) => state.quanLySVReducer.touches);
+  const firstTimeVisit = useSelector((state) => state.quanLySVReducer.isFirstTimeVisit);
   const dssvHook = useSelector((state) => state.quanLySVReducer.dssv);
   const handleChangeValueHook = (e) => {
     dispatch(
@@ -21,7 +23,6 @@ const useCustomHook = () => {
       })
     );
   };
-
   const handleBlurHook = (e) => {
     dispatch(handleBlur(e.target.name));
     dispatch(handleValidate(e.target.name));
@@ -37,6 +38,7 @@ const useCustomHook = () => {
         if (!value) {
           dispatch(handleBlur(field));
           dispatch(handleValidate(field));
+          dispatch(handleChangeTimeVisitToFalse());
         }
       });
     }
@@ -48,18 +50,37 @@ const useCustomHook = () => {
     if (!checkNoError) {
       return;
     }
+
     //reset
     dispatch(resetForm());
   };
 
   const getFieldProps = (name) => {
-    return {
+    const valForTheFirstTimeSubmit = {
+      name,
+      value: valuesHook[name],
+      error: errorsHook[name],
+      onChange: handleChangeValueHook,
+      onBlur: handleBlurHook,
+    }
+
+    const resultReturn = {
       name,
       value: valuesHook[name],
       error: touchesHook[name] && errorsHook[name],
       onChange: handleChangeValueHook,
       onBlur: handleBlurHook,
-    };
+    }
+    // return {
+    //   name,
+    //   value: valuesHook[name],
+    //   error: touchesHook[name] && errorsHook[name],
+    //   onChange: handleChangeValueHook,
+    //   onBlur: handleBlurHook,
+    // };
+    const returnVal = !firstTimeVisit ? valForTheFirstTimeSubmit : resultReturn;
+    console.log(returnVal);
+    return returnVal;
   };
 
   //Lưu danh sách sinh viên vào localStorage:

@@ -33,7 +33,8 @@ const initialState = {
     email: "",
   },
   checkNoError:false,
-  dssv: getStudentListFromLocal()
+  dssv: getStudentListFromLocal(),
+  isFirstTimeVisit : true
 };
 
 
@@ -47,6 +48,9 @@ const quanLySVSlice = createSlice({
     },
     handleBlur: (state, action) => {
       state.touches[action.payload] = true;
+    },
+    handleChangeTimeVisitToFalse: (state, action)=>{
+      state.isFirstTimeVisit = false;
     },
     handleValidate: (state, action) => {
       const value = state.values[action.payload]
@@ -98,5 +102,5 @@ const quanLySVSlice = createSlice({
   },
 });
 
-export const { handleChangeValue, handleBlur, handleValidate,resetForm,checkError} = quanLySVSlice.actions;
+export const { handleChangeValue, handleBlur, handleValidate,resetForm,checkErro, handleChangeTimeVisitToFalse} = quanLySVSlice.actions;
 export const quanLySVReducer = quanLySVSlice.reducer;
