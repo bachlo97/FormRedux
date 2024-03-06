@@ -1,58 +1,102 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Validator } from "../module/QLSV/components/form-dang-ky/utils/validator";
+// import
+const getStudentListFromLocal = () =>{
+  let res = localStorage.getItem('dssv')
+
+  if(res){
+    return JSON.parse(res)
+  }
+  return [];
+}
+
 
 const initialState = {
   values: {
+    maSV: "",
     name: "",
-    brand: "",
-    processor: "",
-    ram: "",
-    screen: "",
-    os: "",
-    card: "",
-    storage: "",
+    sdt: "",
+    email: "",
   },
 
   touches: {
+    maSV: false,
     name: false,
-    brand: false,
-    processor: false,
-    ram: false,
-    screen: false,
-    os: false,
-    card: false,
-    storage: false,
+    sdt: false,
+    email: false,
   },
 
-  errors:{
+  errors: {
+    maSV: "",
     name: "",
-    brand: "",
-    processor: "",
-    ram: "",
-    screen: "",
-    os: "",
-    card: "",
-    storage: "",
-  }
+    sdt: "",
+    email: "",
+  },
+  checkNoError:false,
+  dssv: getStudentListFromLocal()
 };
+
+
 
 const quanLySVSlice = createSlice({
   name: "quanLySVSlice",
   initialState,
   reducers: {
-    handleChangeValue: (state,action)=>{
+    handleChangeValue: (state, action) => {
       state.values[action.payload.nameType] = action.payload.nameValue;
     },
-    handleBlur:(state,action) =>{
-      state.touches[action.payload.nameType] = true;
+    handleBlur: (state, action) => {
+      state.touches[action.payload] = true;
     },
-    handleValidate: (state,action) =>{
-      switch(action.payload){
+    handleValidate: (state, action) => {
+      const value = state.values[action.payload]
+      switch (action.payload) {
+        case 'maSV':
+          state.errors[action.payload] = new Validator(value)
+            .require()
+            .checkNumber()
+            .getMessage()
+          break;
         case 'name':
-          // state.errors[action.payload] = new Validatorx
+          state.errors[action.payload] = new Validator(value)
+            .require()
+            .string()
+            .min(2)
+            .getMessage();
+          break;
+        case 'email':
+          state.errors[action.payload] = new Validator(value)
+            .require()
+            .email()
+            .getMessage();
+          break;
+
+        case 'sdt':
+          state.errors[action.payload] = new Validator(value)
+            .require()
+            .checkNumber()
+            .min(9)
+            .max(11)
+            .getMessage()
+          break;
+        default:
+      }
+    },
+    resetForm: (state) => {
+
+      for (let key in state.values) {
+        state.touches[key] = false
+        state.values[key] = '';
+      }
+    },
+    checkError: (state) =>{
+      const check = Object.entries(state.errors).every(([, value]) => value === "");
+      if(check){
+        state.checkNoError = true;
       }
     }
   },
 });
 
-export const {handleChangeValue,handleBlur,handleValidate} = quanLySVSlice.actions;
+export const { handleChangeValue, handleBlur, handleValidate,resetForm,checkError} = quanLySVSlice.actions;
 export const quanLySVReducer = quanLySVSlice.reducer;
