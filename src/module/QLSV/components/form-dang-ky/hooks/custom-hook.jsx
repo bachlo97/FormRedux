@@ -4,7 +4,7 @@ import {
   handleBlur,
   handleChangeValue,
   handleValidate,
-  resetForm,
+  handleSubmit,
 } from "../../../../../redux/quanLySV.slice";
 
 const useCustomHook = () => {
@@ -12,7 +12,8 @@ const useCustomHook = () => {
   const valuesHook = useSelector((state) => state.quanLySVReducer.values);
   const errorsHook = useSelector((state) => state.quanLySVReducer.errors);
   const touchesHook = useSelector((state) => state.quanLySVReducer.touches);
-  const dssvHook = useSelector((state) => state.quanLySVReducer.dssv);
+  const buttonStateHook = useSelector((state) => state.quanLySVReducer.buttonState);
+  const checkSearchHook = useSelector((state) => state.quanLySVReducer.checkSearch);
   const handleChangeValueHook = (e) => {
     dispatch(
       handleChangeValue({
@@ -30,7 +31,6 @@ const useCustomHook = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     const allTouches = Object.entries(touchesHook).every(([, value]) => value);
-    console.log("first", touchesHook);
     if (!allTouches) {
       Object.entries(touchesHook).forEach((resp) => {
         const [field, value] = resp;
@@ -40,17 +40,10 @@ const useCustomHook = () => {
         }
       });
     }
-    const checkNoError = Object.entries(errorsHook).every(
-      ([, value]) => value === ""
-    );
 
-
-    if (!checkNoError) {
-      return;
-    }
-    //reset
-    dispatch(resetForm());
+    dispatch(handleSubmit());
   };
+
 
   const getFieldProps = (name) => {
     return {
@@ -62,10 +55,8 @@ const useCustomHook = () => {
     };
   };
 
-  //Lưu danh sách sinh viên vào localStorage:
-  // localStorage.setItem('dssv',JSON.stringify(dssvHook))
   return [
-    { touchesHook, errorsHook },
+    { touchesHook, errorsHook,buttonStateHook,checkSearchHook},
     { getFieldProps, onSubmit },
   ];
 };

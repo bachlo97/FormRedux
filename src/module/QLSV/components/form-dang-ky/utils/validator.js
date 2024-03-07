@@ -1,7 +1,7 @@
 export function Validator(value) {
   this.value = value;
   this.message = "";
-
+  this.dssv = 
   this.require = function (message) {
     // Nếu đã có lỗi thì return lại đối tượng, không xử lý validate những cái sau nữa.
     if (this.message) return this;
@@ -71,6 +71,15 @@ export function Validator(value) {
     return this;
   }
 
+  this.checkUsedId = function(dssv,buttonState,message = 'Mã sinh viên đã tồn tại'){
+    if(this.message) return this;
+
+    let msv = dssv.find((item)=>item.maSV == this.value)
+    if(msv && !buttonState ){
+      this.message = message;
+    }
+    return this;
+  }
   // method: getter
   this.getMessage = function () {
     return this.message;
