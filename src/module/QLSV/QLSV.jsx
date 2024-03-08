@@ -1,10 +1,11 @@
 import React from "react";
 import FormDangKy from "./components/form-dang-ky/form-dang-ky";
 import StudentTable from "./components/student-table";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { searchStudent } from "../../redux/quanLySV.slice";
 
 function QuanLySinhVien() {
+  const buttonState = useSelector(state => state.quanLySVReducer.buttonState)
   const dispatch = useDispatch()
   return (
     <div className="container">
@@ -16,8 +17,7 @@ function QuanLySinhVien() {
         <div className="d-flex gap-2">
           <input placeholder="Nhập vào tên sinh viên cần tìm kiếm 🔎 " className="form-control w-25" onChange={(e) =>{
            dispatch(searchStudent(e.target.value))
-           console.log(e.target.value.trim().toUpperCase())
-          }} />
+          }} disabled={buttonState} />
         </div>
       </div>
 

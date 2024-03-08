@@ -57,7 +57,7 @@ function StudentTable() {
             })
           ) : (
             <tr>
-              <td>
+              <td style={{border:'none'}}>
                 <p className="text-danger text-center">Not any thing...</p>
               </td>
             </tr>
